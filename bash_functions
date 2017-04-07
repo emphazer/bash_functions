@@ -34,3 +34,7 @@ CPUBENCH() {
 NETSTAT() {
 netstat -an | awk '/(VERBUNDEN|ESTABLISHED)/ {print $5}' | awk -F: '{print $1}' | sort | uniq -c | awk '{ printf("%s\t%s\t",$2,$1) ; for (i = 0; i < $1; i++) {printf("*")}; print "" }'
 }
+
+OPENSSL_CERTS() {
+        openssl s_client -showcerts -connect $1:443 -servername "${1}" < /dev/null | awk -v c=-1 '/-----BEGIN CERTIFICATE-----/{inc=1;c++}; inc {print; print > ("level" c ".crt")}; /-----END CERTIFICATE-----/{inc=0}'
+}
